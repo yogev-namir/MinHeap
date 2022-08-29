@@ -1,6 +1,9 @@
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.Math.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Queue;
 import java.util.TreeMap;
 
 
@@ -63,22 +66,30 @@ public class MinTreeHeap {
         return min;
     }
 
-    public void printByLayer(DataOutputStream out){
+    public void printByLayer(DataOutputStream out) throws IOException {
         int height = log2(this.heapSize);
+        Queue q = new Queue();
         for(int i=1; i<=height;i++){
-            printLayer(out,this.root,i);
-            out.writeBytes(Sytem.lineSeperator());
+            printLayer(out,this.root,i,0);
+
+            out.writeBytes(System.lineSeparator());
         }
     }
-    public void printLayer(DataOutputStream out, HeapNode node,int layer){
+    public void printLayer(DataOutputStream out, HeapNode node, int layer, Queue q) throws IOException {
         if(node == null)
             return;
         else if(layer==1) {
-            out.writeBytes(node.key);
+            if(lastNode==0)
+                out.writeBytes(""+node.key+",");
+            else
+                out.writeBytes(""+node.key);
         }
         else
-            printLayer(out, node.left,layer-1);
-            printLayer(out, node.right,layer-1);
+            printLayer(out, node.left,layer-1,0);
+            if(layer-1==1)
+                printLayer(out, node.right,layer-1,1);
+            else
+                printLayer(out, node.right,layer-1,0);
 
     }
     public void HeapifyT(HeapNode node){
