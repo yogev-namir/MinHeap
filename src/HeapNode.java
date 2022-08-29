@@ -13,4 +13,8 @@ public class HeapNode {
     public HeapNode(int key,int index){
         this(key, index, null, null,null);
     }
+    public HeapNode(int key,int index, HeapNode parent){
+        this(key, index, null, null,parent);
+    }
+
 }

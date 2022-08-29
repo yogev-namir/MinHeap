@@ -41,13 +41,28 @@ public class MinTreeHeap {
     public void HeapInsert(int k){
         int[] path = findPath();
         this.heapSize++;
-        HeapNode tmp = this.root;
+        HeapNode child;
+        HeapNode parent = this.root;
+        if(parent==null) {
+            this.root = new HeapNode(k, this.heapSize);
+            return;
+        }
         for(int i=0; i<path.length-1; i++)
-            tmp = (path[i]==0) ? tmp.left : tmp.right;
-        if(this.heapSize%2 == 0)
-            tmp.left = new HeapNode(k, this.heapSize);
-        else
-            tmp.right = new HeapNode(k, this.heapSize);
+            parent = (path[i]==0) ? parent.left : parent.right;
+        if(this.heapSize%2 == 0) {
+            parent.left = new HeapNode(k, this.heapSize, parent);
+            child = parent.left;
+        }
+        else{
+            parent.right = new HeapNode(k, this.heapSize, parent);
+            child = parent.right;
+        }
+
+        while(parent!=null && child.key < parent.key) {
+            swapT(child,parent);
+            child = parent;
+            parent = parent.parent;
+        }
     }
 
     /**
@@ -67,29 +82,35 @@ public class MinTreeHeap {
     }
 
     public void printByLayer(DataOutputStream out) throws IOException {
-        int height = log2(this.heapSize);
-        Queue q = new Queue();
+        int height = log2(this.heapSize)+1;
+        HeapQueue q= new HeapQueue();
         for(int i=1; i<=height;i++){
-            printLayer(out,this.root,i,0);
-
+            printLayer(out,this.root,i, q);
+            HeapNode node= q.dequeue();
+            while(node != null) {
+                if(q.elements>0){
+                    out.writeBytes("" + node.key + ",");
+                    node= q.dequeue();
+                }
+                else{
+                    out.writeBytes("" + node.key);
+                    node= q.dequeue();
+                }
+            }
             out.writeBytes(System.lineSeparator());
         }
     }
-    public void printLayer(DataOutputStream out, HeapNode node, int layer, Queue q) throws IOException {
+    public void printLayer(DataOutputStream out, HeapNode node, int layer,
+                           HeapQueue q){
         if(node == null)
             return;
         else if(layer==1) {
-            if(lastNode==0)
-                out.writeBytes(""+node.key+",");
-            else
-                out.writeBytes(""+node.key);
+            q.enqueue(node);
         }
-        else
-            printLayer(out, node.left,layer-1,0);
-            if(layer-1==1)
-                printLayer(out, node.right,layer-1,1);
-            else
-                printLayer(out, node.right,layer-1,0);
+        else {
+            printLayer(out, node.left, layer - 1, q);
+            printLayer(out, node.right, layer - 1, q);
+        }
 
     }
     public void HeapifyT(HeapNode node){
@@ -118,7 +139,8 @@ public class MinTreeHeap {
         int heapSize=A.length, smallest;
         if(left<=heapSize-1 && A[left]<A[i])
             smallest=left;
-        else smallest=i;
+        else
+            smallest=i;
         if(right<=heapSize-1 && A[right]<A[smallest])
             smallest=right;
         if(smallest!=i){
@@ -138,7 +160,7 @@ public class MinTreeHeap {
     }
     public int[] findPath(){
         //assume that heapSize was already incremented by one
-        int[] path = new int[(int)log2(this.heapSize)];
+        int[] path = new int[log2(this.heapSize)];
         for(int i=path.length-1, tmp = this.heapSize; i>=0; i--) {
             path[i] = (tmp % 2 == 0) ? 0 : 1;//0 is left - 1 is right
             tmp = (int) tmp / 2;
