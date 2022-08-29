@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.lang.Math.*;
 import java.util.TreeMap;
 
+
 public class MinTreeHeap {
     HeapNode root;
     int heapSize;
@@ -16,6 +17,7 @@ public class MinTreeHeap {
         for(int i= A.length-1;i>=0;i--)
             Heapify(A,i);
     }
+
     public static MinTreeHeap BuildHeapT(int[] A) {
         BuildHeap(A);
         HeapNode[] B = new HeapNode[A.length+1];
@@ -25,7 +27,7 @@ public class MinTreeHeap {
             B[i+1] = x;
         }
         for (int i = 1; i < B.length; i++) {
-            B[i].parent = B[Math.floorDiv(i,2)];
+            B[i].parent = B[i /2];
             if(2*i <= A.length)
                 B[i].left = B[2*i];
             if((2*i)+1 <= A.length)
@@ -34,18 +36,72 @@ public class MinTreeHeap {
         return new MinTreeHeap(B[1],A.length);
     }
     public void HeapInsert(int k){
-
+        int[] path = findPath();
+        this.heapSize++;
+        HeapNode tmp = this.root;
+        for(int i=0; i<path.length-1; i++)
+            tmp = (path[i]==0) ? tmp.left : tmp.right;
+        if(this.heapSize%2 == 0)
+            tmp.left = new HeapNode(k, this.heapSize);
+        else
+            tmp.right = new HeapNode(k, this.heapSize);
     }
 
+    /**
+     * 0 is left - 1 is right
+     * @return min element in the heap(by key)
+     */
     public int HeapExtractMin(){
-
-        return 0;
+        int min = this.root.key;
+        this.heapSize--;
+        int[] path = findPath();
+        HeapNode tmp = this.root;
+        for(int i=0; i<path.length; i++)
+            tmp = (path[i]==0) ? tmp.left : tmp.right;
+        this.root.key = tmp.key;
+        HeapifyT(this.root);
+        return min;
     }
 
-     public void printByLayer(DataOutputStream out){
+    public void printByLayer(DataOutputStream out){
+        int height = log2(this.heapSize);
+        for(int i=1; i<=height;i++){
+            printLayer(out,this.root,i);
+            out.writeBytes(Sytem.lineSeperator());
+        }
+    }
+    public void printLayer(DataOutputStream out, HeapNode node,int layer){
+        if(node == null)
+            return;
+        else if(layer==1) {
+            out.writeBytes(node.key);
+        }
+        else
+            printLayer(out, node.left,layer-1);
+            printLayer(out, node.right,layer-1);
 
-     }
-     public static void Heapify(int[] A, int i){
+    }
+    public void HeapifyT(HeapNode node){
+        if(node == null || (node.left == null && node.right == null))
+            return;
+        if(node.left != null && node.left.key < node.key){
+            if(node.right != null && (node.left.key < node.right.key)){
+                swapT(node, node.left);
+                HeapifyT(node.left);
+            }
+            else{
+                swapT(node, node.right);
+                HeapifyT(node.right);
+            }
+        }
+        else{
+            if(node.right != null && (node.right.key < node.key)){
+                swapT(node, node.right);
+                HeapifyT(node.right);
+            }
+        }
+    }
+    public static void Heapify(int[] A, int i){
         int left=(2*i)+1;
         int right=(2*i)+2;
         int heapSize=A.length, smallest;
@@ -58,20 +114,32 @@ public class MinTreeHeap {
             swap(A,i,smallest);
             Heapify(A,smallest);
         }
-     }
-     public static void swap(int[] A,int i,int smallest){
-        int tmp=A[i];
-        A[i]=A[smallest];
-        A[smallest]=tmp;
-     }
-     public int[] findPath(){
+    }
+    public static void swap(int[] A, int i, int j){
+        int tmp = A[i];
+        A[i] = A[j];
+        A[j] = tmp;
+    }
+    public static void swapT(HeapNode x, HeapNode y){
+        int tmp = x.key;
+        x.key = y.key;
+        y.key = tmp;
+    }
+    public int[] findPath(){
         //assume that heapSize was already incremented by one
-        int[] path = new int[(int)Math.log(this.heapSize)];
+        int[] path = new int[(int)log2(this.heapSize)];
         for(int i=path.length-1, tmp = this.heapSize; i>=0; i--) {
-            path[i] = (tmp % 2 == 0) ? 0 : 1;//1 is left - 0 is right
+            path[i] = (tmp % 2 == 0) ? 0 : 1;//0 is left - 1 is right
             tmp = (int) tmp / 2;
         }
         return path;
-     }
+    }
+    public static int log2(int N)
+    {
 
+        // calculate log2 N indirectly
+        // using log() method
+
+        return (int)(Math.log(N) / Math.log(2));
+    }
 }

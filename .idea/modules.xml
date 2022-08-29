@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/EXP.iml" filepath="$PROJECT_DIR$/EXP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MinHeap.iml" filepath="$PROJECT_DIR$/MinHeap.iml" />
     </modules>
   </component>
 </project>
