@@ -23,7 +23,7 @@ public class Test {
         random.setSeed(Constants.SEED);
         testMinHeap(random, outStream);
         testMaxHeap(random, outStream);/////////////////////////
-        //testMedianDS(random, outStream);////////////////////////
+        testMedianDS(random, outStream);////////////////////////
     }
     public static void testMinHeap(Random random, DataOutputStream outStream) throws IOException
     {
@@ -124,7 +124,7 @@ public class Test {
 
     }
 
-    /*
+
     public static void testMedianDS(Random random, DataOutputStream outStream) throws IOException
     {
         int[] A = new int[Constants.INITIAL_SIZE];
@@ -176,7 +176,7 @@ public class Test {
     }
 
 
-     */
+
 
     public static Constants.Operations[] generateOperations(Random random)
     {

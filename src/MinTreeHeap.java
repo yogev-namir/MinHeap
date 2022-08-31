@@ -1,10 +1,6 @@
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.lang.Math.*;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Queue;
-import java.util.TreeMap;
+
 
 public class MinTreeHeap {
     HeapNode root;
@@ -85,29 +81,25 @@ public class MinTreeHeap {
     }
 
     public void printByLayer(DataOutputStream out) throws IOException {
-        int height = log2(this.heapSize)+1;
-        HeapQueue q= new HeapQueue();
+        int key, height = log2(this.heapSize)+1;
+        LinkedQueue q= new LinkedQueue();
         for(int i=1; i<=height;i++){
             printLayer(this.root,i, q);
-            HeapNode node= q.dequeue();
-            while(node != null) {
-                if(q.elements>0){
-                    out.writeBytes("" + node.key + ",");
-                    node= q.dequeue();
-                }
-                else{
-                    out.writeBytes("" + node.key);
-                    node= q.dequeue();
-                }
+            while(!q.isEmpty()) {
+                key = q.dequeue();
+                if(q.count>0)
+                    out.writeBytes("" + key + ",");
+                else
+                    out.writeBytes("" + key);
             }
             out.writeBytes(System.lineSeparator());
         }
     }
-    public void printLayer(HeapNode node, int layer, HeapQueue q){
+    public void printLayer(HeapNode node, int layer, LinkedQueue q){
         if(node == null)
             return;
         else if(layer==1) {
-            q.enqueue(node);
+            q.enqueue(node.key);
         }
         else {
             printLayer(node.left, layer - 1, q);
@@ -115,6 +107,7 @@ public class MinTreeHeap {
         }
 
     }
+
     public void HeapifyT(HeapNode node){
         if(node == null || (node.left == null && node.right == null))
             return;

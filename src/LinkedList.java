@@ -1,29 +1,65 @@
-public class LinkedList<T> {
+public class LinkedList {
 
-    T value;
-    private LinkedList<T> head;
-    private LinkedList<T> next;
-    private LinkedList<T> prev;
+    Node head;// head of list
+    int count=0;//number of elements in the linked list
 
+    // Linked list Node.
+    // This inner class is made static
+    // so that main() can access it
+    static class Node {
 
-    public LinkedList(T value) {
-        this.value = value;
-        this.next = null;
-        this.prev= null;
-        this.head= this;
+        int data;
+        Node next;
+
+        // Constructor
+        Node(int d) {
+            data = d;
+            next = null;
+        }
     }
 
-    public LinkedList() {
-        this.value = null;
-        this.next = null;
-        this.prev= null;
-        this.head= this;
+    // Method to insert a new node
+    public void insert(int data) {
+        // Create a new node with given data
+        Node new_node = new Node(data);
+
+
+        // If the Linked List is empty,
+        // then make the new node as head
+        if (this.head == null) {
+            this.head = new_node;
+        }
+        else{
+            // Else traverse till the last node
+            // and insert the new_node there
+            Node last = this.head;
+            while (last.next != null) {
+                last = last.next;
+            }
+
+            // Insert the new_node at last node
+            last.next = new_node;
+        }
+        count++;
     }
-
-    public T getValue(){return value;}
-    public LinkedList<T> getNext() {return this.next;}
-    public void setNext(LinkedList<T> node){this.next= node;}
-    public void setPrev(LinkedList<T> node){this.prev= node;}
-    public LinkedList<T> getHead() {return head;}
-
+    public void removeMed(){
+        if(head==null)
+            return;
+        Node tmp = this.head;
+        int position = this.count/2;
+        for (int i = 0; i < position - 1; i++)
+            tmp = tmp.next;
+        tmp.next = tmp.next.next;
+        this.count--;
+    }
+    public int[] toArray(){
+        int[] A = new int[this.count];
+        if (this.head == null) {return null;}
+        Node last = this.head;
+        for(int i=0;i<count;i++){
+            A[i] = last.data;
+            last = last.next;
+        }
+        return A;
+    }
 }
