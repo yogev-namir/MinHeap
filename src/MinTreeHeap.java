@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.Queue;
 import java.util.TreeMap;
 
-
 public class MinTreeHeap {
     HeapNode root;
     int heapSize;
@@ -38,18 +37,18 @@ public class MinTreeHeap {
         }
         return new MinTreeHeap(B[1],A.length);
     }
-    public void HeapInsert(int k){
-        int[] path = findPath();
+    public void HeapInsert(int k) {
         this.heapSize++;
-        HeapNode child;
-        HeapNode parent = this.root;
-        if(parent==null) {
+        int[] path = findPath();
+        HeapNode child, parent = this.root;
+
+        if(parent==null){
             this.root = new HeapNode(k, this.heapSize);
             return;
         }
         for(int i=0; i<path.length-1; i++)
             parent = (path[i]==0) ? parent.left : parent.right;
-        if(this.heapSize%2 == 0) {
+        if(parent.left==null) {
             parent.left = new HeapNode(k, this.heapSize, parent);
             child = parent.left;
         }
@@ -57,7 +56,6 @@ public class MinTreeHeap {
             parent.right = new HeapNode(k, this.heapSize, parent);
             child = parent.right;
         }
-
         while(parent!=null && child.key < parent.key) {
             swapT(child,parent);
             child = parent;
@@ -71,12 +69,17 @@ public class MinTreeHeap {
      */
     public int HeapExtractMin(){
         int min = this.root.key;
-        this.heapSize--;
         int[] path = findPath();
+
+        this.heapSize--;
         HeapNode tmp = this.root;
         for(int i=0; i<path.length; i++)
             tmp = (path[i]==0) ? tmp.left : tmp.right;
         this.root.key = tmp.key;
+        if(tmp.parent.left==tmp)
+            tmp.parent.left=null;
+        else
+            tmp.parent.right=null;
         HeapifyT(this.root);
         return min;
     }
@@ -85,7 +88,7 @@ public class MinTreeHeap {
         int height = log2(this.heapSize)+1;
         HeapQueue q= new HeapQueue();
         for(int i=1; i<=height;i++){
-            printLayer(out,this.root,i, q);
+            printLayer(this.root,i, q);
             HeapNode node= q.dequeue();
             while(node != null) {
                 if(q.elements>0){
@@ -100,38 +103,31 @@ public class MinTreeHeap {
             out.writeBytes(System.lineSeparator());
         }
     }
-    public void printLayer(DataOutputStream out, HeapNode node, int layer,
-                           HeapQueue q){
+    public void printLayer(HeapNode node, int layer, HeapQueue q){
         if(node == null)
             return;
         else if(layer==1) {
             q.enqueue(node);
         }
         else {
-            printLayer(out, node.left, layer - 1, q);
-            printLayer(out, node.right, layer - 1, q);
+            printLayer(node.left, layer - 1, q);
+            printLayer(node.right, layer - 1, q);
         }
 
     }
     public void HeapifyT(HeapNode node){
         if(node == null || (node.left == null && node.right == null))
             return;
-        if(node.left != null && node.left.key < node.key){
-            if(node.right != null && (node.left.key < node.right.key)){
-                swapT(node, node.left);
-                HeapifyT(node.left);
-            }
-            else{
-                swapT(node, node.right);
-                HeapifyT(node.right);
-            }
+        HeapNode smallest= node;
+        if(node.left != null && node.left.key < node.key)
+            smallest=node.left;
+        if(node.right != null && node.right.key < smallest.key)
+            smallest=node.right;
+        if(smallest!=node){
+            swapT(node,smallest);
+            HeapifyT(smallest);
         }
-        else{
-            if(node.right != null && (node.right.key < node.key)){
-                swapT(node, node.right);
-                HeapifyT(node.right);
-            }
-        }
+
     }
     public static void Heapify(int[] A, int i){
         int left=(2*i)+1;

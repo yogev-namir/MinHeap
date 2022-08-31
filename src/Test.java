@@ -22,7 +22,7 @@ public class Test {
         // fix the seed to reproduce the run
         random.setSeed(Constants.SEED);
         testMinHeap(random, outStream);
-        //testMaxHeap(random, outStream);/////////////////////////
+        testMaxHeap(random, outStream);/////////////////////////
         //testMedianDS(random, outStream);////////////////////////
     }
     public static void testMinHeap(Random random, DataOutputStream outStream) throws IOException
@@ -39,6 +39,7 @@ public class Test {
         MinTreeHeap heap = MinTreeHeap.BuildHeapT(A);
         Constants.Operations[] operationsArray = generateOperations(random);
         for (int i=0; i<Constants.TEST_SIZE;i++)
+        //for (int i=0; i<3;i++)
         {
             switch (operationsArray[i])
             {
@@ -72,7 +73,7 @@ public class Test {
             }
         }
     }
-    /*
+
     public static void testMaxHeap(Random random, DataOutputStream outStream) throws IOException
     {
         int[] A = new int[Constants.INITIAL_SIZE];
@@ -123,7 +124,7 @@ public class Test {
 
     }
 
-
+    /*
     public static void testMedianDS(Random random, DataOutputStream outStream) throws IOException
     {
         int[] A = new int[Constants.INITIAL_SIZE];
@@ -174,7 +175,9 @@ public class Test {
 
     }
 
+
      */
+
     public static Constants.Operations[] generateOperations(Random random)
     {
         Constants.Operations[] operationsValuesArray = Constants.Operations.values();
