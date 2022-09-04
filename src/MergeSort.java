@@ -65,6 +65,6 @@ class MergeSort {
     }
     public int median(int[] A){
         sort(A,0,A.length-1);
-        return A[A.length/2];
+        return (A.length%2==0) ? A[(A.length/2)-1] : A[(A.length/2)];
     }
 }
