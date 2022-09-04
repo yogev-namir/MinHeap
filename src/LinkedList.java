@@ -6,20 +6,23 @@ public class LinkedList {
     // Linked list Node.
     // This inner class is made static
     // so that main() can access it
-    static class Node {
+    static class Node
+    {
 
         int data;
         Node next;
 
         // Constructor
-        Node(int d) {
+        Node(int d)
+        {
             data = d;
             next = null;
         }
     }
 
     // Method to insert a new node
-    public void insert(int data) {
+    public void insert(int data)
+    {
         // Create a new node with given data
         Node new_node = new Node(data);
 
@@ -42,21 +45,12 @@ public class LinkedList {
         }
         count++;
     }
-    public void removeMed(){
-        if(head==null)
-            return;
-        Node tmp = this.head;
-        int position = this.count/2;
-        for (int i = 0; i < position - 1; i++)
-            tmp = tmp.next;
-        tmp.next = tmp.next.next;
-        this.count--;
-    }
     public int[] toArray(){
         int[] A = new int[this.count];
         if (this.head == null) {return null;}
         Node last = this.head;
-        for(int i=0;i<count;i++){
+        for(int i=0;i<count;i++)
+        {
             A[i] = last.data;
             last = last.next;
         }

@@ -1,29 +1,39 @@
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class MaxTreeHeap {
+public class MaxTreeHeap
+{
     HeapNode root;
     int heapSize;
 
-    public MaxTreeHeap(HeapNode root, int heapSize) {
+    public MaxTreeHeap(HeapNode root, int heapSize)
+    {
         this.root = root;
         this.heapSize = heapSize;
     }
 
-    public static void BuildHeap(int[] A){
+    public static void BuildHeap(int[] A)
+    {
+        if(A==null)
+        {
+            return;
+        }
         for(int i= A.length-1;i>=0;i--)
             Heapify(A,i);
     }
 
-    public static MaxTreeHeap BuildHeapT(int[] A) {
+    public static MaxTreeHeap BuildHeapT(int[] A)
+    {
         BuildHeap(A);
         HeapNode[] B = new HeapNode[A.length+1];
         B[0] = null;
-        for (int i = 0; i < A.length; i++) {
+        for (int i = 0; i < A.length; i++)
+        {
             HeapNode x = new HeapNode(A[i], i);
             B[i+1] = x;
         }
-        for (int i = 1; i < B.length; i++) {
+        for (int i = 1; i < B.length; i++)
+        {
             B[i].parent = B[i /2];
             if(2*i <= A.length)
                 B[i].left = B[2*i];
@@ -32,28 +42,34 @@ public class MaxTreeHeap {
         }
         return new MaxTreeHeap(B[1],A.length);
     }
-    public void HeapInsert(int k){
+    public void HeapInsert(int k)
+    {
         this.heapSize++;
         int[] path = findPath();
         HeapNode child, parent = this.root;
 
 
-        if(parent==null) {
+        if(parent==null)
+        {
             this.root = new HeapNode(k, this.heapSize);
             return;
         }
         for(int i=0; i<path.length-1; i++)
             parent = (path[i]==0) ? parent.left : parent.right;
-        if(this.heapSize%2 == 0) {
+
+        if(this.heapSize%2 == 0)
+        {
             parent.left = new HeapNode(k, this.heapSize, parent);
             child = parent.left;
         }
-        else{
+        else
+        {
             parent.right = new HeapNode(k, this.heapSize, parent);
             child = parent.right;
         }
 
-        while(parent!=null && child.key > parent.key) {
+        while(parent!=null && child.key > parent.key)
+        {
             swapT(child,parent);
             child = parent;
             parent = parent.parent;
@@ -64,7 +80,8 @@ public class MaxTreeHeap {
      * 0 is left - 1 is right
      * @return min element in the heap(by key)
      */
-    public int HeapExtractMax(){
+    public int HeapExtractMax()
+    {
         int max = this.root.key;
         int[] path = findPath();
 
@@ -83,12 +100,15 @@ public class MaxTreeHeap {
     }
 
 
-    public void printByLayer(DataOutputStream out) throws IOException {
+    public void printByLayer(DataOutputStream out) throws IOException
+    {
         int key, height = log2(this.heapSize)+1;
         LinkedQueue q= new LinkedQueue();
-        for(int i=1; i<=height;i++){
+        for(int i=1; i<=height;i++)
+        {
             printLayer(this.root,i, q);
-            while(!q.isEmpty()) {
+            while(!q.isEmpty())
+            {
                 key = q.dequeue();
                 if(q.count>0)
                     out.writeBytes("" + key + ",");
@@ -98,10 +118,12 @@ public class MaxTreeHeap {
             out.writeBytes(System.lineSeparator());
         }
     }
-    public void printLayer(HeapNode node, int layer, LinkedQueue q){
+    public void printLayer(HeapNode node, int layer, LinkedQueue q)
+    {
         if(node == null)
             return;
-        else if(layer==1) {
+        else if(layer==1)
+        {
             q.enqueue(node.key);
         }
         else {
@@ -111,7 +133,8 @@ public class MaxTreeHeap {
 
     }
 
-    public void HeapifyT(HeapNode node){
+    public void HeapifyT(HeapNode node)
+    {
         if(node == null || (node.left == null && node.right == null))
             return;
         HeapNode largest= node;
@@ -138,31 +161,33 @@ public class MaxTreeHeap {
             Heapify(A,largest);
         }
     }
-    public static void swap(int[] A, int i, int j){
+    public static void swap(int[] A, int i, int j)
+    {
         int tmp = A[i];
         A[i] = A[j];
         A[j] = tmp;
     }
-    public static void swapT(HeapNode x, HeapNode y){
+    public static void swapT(HeapNode x, HeapNode y)
+    {
         int tmp = x.key;
         x.key = y.key;
         y.key = tmp;
     }
-    public int[] findPath(){
+    public int[] findPath()
+    {
         //assume that heapSize was already incremented by one
         int[] path = new int[log2(this.heapSize)];
-        for(int i=path.length-1, tmp = this.heapSize; i>=0; i--) {
+        int tmp = this.heapSize;
+
+        for(int i=path.length-1; i>=0; i--)
+        {
             path[i] = (tmp % 2 == 0) ? 0 : 1;//0 is left - 1 is right
-            tmp = (int) tmp / 2;
+            tmp /= 2;
         }
         return path;
     }
     public static int log2(int N)
     {
-
-        // calculate log2 N indirectly
-        // using log() method
-
         return (int)(Math.log(N) / Math.log(2));
     }
 }
