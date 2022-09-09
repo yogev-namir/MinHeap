@@ -82,6 +82,8 @@ public class MaxTreeHeap
      */
     public int HeapExtractMax()
     {
+        if(this.root==null)
+            return Integer.MAX_VALUE;
         int max = this.root.key;
         int[] path = findPath();
 
@@ -102,6 +104,8 @@ public class MaxTreeHeap
 
     public void printByLayer(DataOutputStream out) throws IOException
     {
+        if(this.root==null)
+            return;
         int key, height = log2(this.heapSize)+1;
         LinkedQueue q= new LinkedQueue();
         for(int i=1; i<=height;i++)

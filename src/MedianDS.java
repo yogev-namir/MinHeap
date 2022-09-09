@@ -4,8 +4,18 @@ public class MedianDS {
 
     public MedianDS(int[] A)
     {
-        int median = select(A,(A.length/2)-1);
-
+        int median;
+        if(A.length>=2){
+            median = select(A,(A.length/2)-1);
+        }
+        else if(A.length==1){
+            median = A[0];
+        }
+        else{
+            return;
+        }
+        MergeSort merge = new MergeSort();
+        merge.sort(A,0,A.length-1);
         LinkedList max= new LinkedList(),min= new LinkedList();
         for(int i=0;i<A.length;i++)
         {
@@ -76,6 +86,7 @@ public class MedianDS {
     public int select(int[] A, int i)
     {
         int x = recursiveSelect(A);
+
         int q = partition(A,0, A.length, x);
         if(i==q)
             return x;

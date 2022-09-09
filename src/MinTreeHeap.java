@@ -17,6 +17,9 @@ public class MinTreeHeap {
     }
 
     public static MinTreeHeap BuildHeapT(int[] A) {
+        if(A==null){
+            return new MinTreeHeap(null,0);
+        }
         BuildHeap(A);
         HeapNode[] B = new HeapNode[A.length+1];
         B[0] = null;
@@ -64,6 +67,8 @@ public class MinTreeHeap {
      * @return min element in the heap(by key)
      */
     public int HeapExtractMin(){
+        if(this.root==null)
+            return Integer.MIN_VALUE;
         int min = this.root.key;
         int[] path = findPath();
 
@@ -81,6 +86,10 @@ public class MinTreeHeap {
     }
 
     public void printByLayer(DataOutputStream out) throws IOException {
+        if(this.root==null){
+            out.writeBytes("");
+            return;
+        }
         int key, height = log2(this.heapSize)+1;
         LinkedQueue q= new LinkedQueue();
         for(int i=1; i<=height;i++){
